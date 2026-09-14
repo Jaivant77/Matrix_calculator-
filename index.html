@@ -3,29 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gauss-Seidel // 3×3 Solver</title>
+
+    <title>Gauss-Seidel Matrix Calculator</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="shell">
+<div class="app">
 
-    <!-- TOP BAR -->
-    <div class="topbar">
+    <!-- =========================
+         TOP BAR
+    ========================== -->
+
+    <header class="topbar">
+
         <div class="brand">
             <span class="brand-dot"></span>
             NUM_METHODS // GS_SOLVER
         </div>
 
-        <div class="terminal-chip">
-            3×3 • GAUSS-SEIDEL • OFFLINE
+        <div class="header-label">
+            3×3 • GAUSS-SEIDEL
         </div>
-    </div>
 
-    <!-- HERO -->
+    </header>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
     <section class="hero">
-        <div class="prompt">
+
+        <div class="terminal">
             root@matrix-lab:~$ ./gauss_seidel --solve
         </div>
 
@@ -35,128 +47,577 @@
         </h1>
 
         <p>
-            Solve a 3×3 system of linear equations using the Gauss-Seidel
-            iterative method with validation, convergence tracking,
-            iteration history and live solver status.
+            Solve a 3×3 system of linear equations using the
+            Gauss-Seidel iterative method.
         </p>
+
     </section>
 
 
-    <!-- MAIN -->
-    <main class="layout">
+    <!-- =========================
+         MAIN WORKSPACE
+    ========================== -->
 
-        <!-- LEFT COLUMN -->
-        <div class="stack">
+    <main class="workspace">
 
-            <!-- MATRIX INPUT -->
-            <section class="card">
 
-                <div class="card-head">
-                    <div class="card-title">
-                        <span class="index">01</span>
-                        Input Matrix A
-                    </div>
+        <!-- =========================
+             01 MATRIX INPUT
+        ========================== -->
 
-                    <div class="summary-tag">
-                        COEFFICIENTS
-                    </div>
+        <section class="card">
+
+            <div class="card-header">
+
+                <div class="card-title">
+
+                    <span class="number">
+                        01
+                    </span>
+
+                    INPUT MATRIX
+
                 </div>
 
-                <div class="card-body">
+                <span class="section-tag">
+                    3 × 3
+                </span>
 
-                    <div class="matrix-layout">
+            </div>
 
-                        <!-- MATRIX A -->
-                        <div>
 
-                            <div class="section-label">
-                                A =
-                            </div>
+            <div class="card-body">
 
-                            <div class="matrix-frame">
+                <div class="input-layout">
 
-                                <div class="matrix" id="matrixInputs">
-                                    <!-- JS Generated -->
-                                </div>
 
-                            </div>
+                    <!-- MATRIX A -->
 
+                    <div class="matrix-area">
+
+                        <div class="input-label">
+                            COEFFICIENT MATRIX A
                         </div>
 
 
-                        <!-- VECTOR B -->
-                        <div>
+                        <div class="matrix-wrapper">
 
-                            <div class="section-label">
-                                b =
-                            </div>
-
-                            <div class="vector" id="vectorInputs">
-                                <!-- JS Generated -->
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="hint">
-                        Accepted values: integers, decimals and scientific notation.
-                        Diagonal elements must be non-zero.
-                    </div>
-
-                </div>
-
-            </section>
+                            <span class="matrix-bracket left">
+                                [
+                            </span>
 
 
-            <!-- SETTINGS -->
-            <section class="card">
-
-                <div class="card-head">
-
-                    <div class="card-title">
-                        <span class="index">02</span>
-                        Solver Configuration
-                    </div>
-
-                    <div class="summary-tag">
-                        ITERATION CONTROL
-                    </div>
-
-                </div>
-
-
-                <div class="card-body">
-
-                    <div class="section-label">
-                        Convergence
-                    </div>
-
-
-                    <div class="settings">
-
-                        <div class="setting">
-
-                            <label for="tolerance">
-                                Tolerance
-                            </label>
-
-                            <input
-                                id="tolerance"
-                                type="number"
-                                step="any"
-                                min="0"
-                                value="0.000001"
+                            <div
+                                id="matrixInputs"
+                                class="matrix-grid"
                             >
 
+                                <!-- JS WILL CREATE 9 INPUTS -->
+
+                            </div>
+
+
+                            <span class="matrix-bracket right">
+                                ]
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- VECTOR B -->
+
+                    <div class="vector-area">
+
+                        <div class="input-label">
+                            CONSTANT VECTOR b
                         </div>
 
 
-                        <div class="setting">
+                        <div class="vector-wrapper">
 
-                            <label for="maxIterations">
-                                Max Iterations
-                            </label>
+                            <span class="vector-bracket left">
+                                [
+                            </span>
 
-                            <input
-                               
+
+                            <div
+                                id="vectorInputs"
+                                class="vector-grid"
+                            >
+
+                                <!-- JS WILL CREATE 3 INPUTS -->
+
+                            </div>
+
+
+                            <span class="vector-bracket right">
+                                ]
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="input-help">
+
+                    Enter all 9 values of matrix A and all 3 values
+                    of vector b. Diagonal values must not be zero.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             02 SOLVER SETTINGS
+        ========================== -->
+
+        <section class="card">
+
+            <div class="card-header">
+
+                <div class="card-title">
+
+                    <span class="number">
+                        02
+                    </span>
+
+                    SOLVER CONFIGURATION
+
+                </div>
+
+                <span class="section-tag">
+                    ITERATION CONTROL
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+
+                <div class="input-label">
+                    CONVERGENCE SETTINGS
+                </div>
+
+
+                <div class="settings-grid">
+
+
+                    <div class="setting-box">
+
+                        <label for="tolerance">
+                            Tolerance
+                        </label>
+
+                        <input
+                            id="tolerance"
+                            type="number"
+                            step="any"
+                            min="0"
+                            value="0.000001"
+                        >
+
+                    </div>
+
+
+                    <div class="setting-box">
+
+                        <label for="maxIterations">
+                            Maximum Iterations
+                        </label>
+
+                        <input
+                            id="maxIterations"
+                            type="number"
+                            step="1"
+                            min="1"
+                            max="100000"
+                            value="100"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="input-label initial-label">
+                    INITIAL GUESS
+                </div>
+
+
+                <div class="guess-grid">
+
+                    <input
+                        id="x10"
+                        type="number"
+                        step="any"
+                        value="0"
+                        placeholder="x₁₀"
+                    >
+
+                    <input
+                        id="x20"
+                        type="number"
+                        step="any"
+                        value="0"
+                        placeholder="x₂₀"
+                    >
+
+                    <input
+                        id="x30"
+                        type="number"
+                        step="any"
+                        value="0"
+                        placeholder="x₃₀"
+                    >
+
+                </div>
+
+
+                <div class="button-row">
+
+                    <button
+                        id="solveBtn"
+                        class="btn-primary"
+                    >
+                        ▶ RUN SOLVER
+                    </button>
+
+
+                    <button
+                        id="resetBtn"
+                        class="btn-secondary"
+                    >
+                        ↺ RESET
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             03 STATUS
+        ========================== -->
+
+        <section class="card">
+
+            <div class="card-header">
+
+                <div class="card-title">
+
+                    <span class="number">
+                        03
+                    </span>
+
+                    LIVE STATUS
+
+                </div>
+
+                <span
+                    id="statusBadge"
+                    class="section-tag"
+                >
+                    IDLE
+                </span>
+
+            </div>
+
+
+            <div class="card-body status-body">
+
+                <div
+                    id="statusLine"
+                    class="status info"
+                >
+
+                    <span class="status-icon">
+                        i
+                    </span>
+
+                    <span>
+                        Waiting for matrix input.
+                        The solver is ready.
+                    </span>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        id="progressBar"
+                        class="progress-bar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             04 ERROR AREA
+        ========================== -->
+
+        <section class="card">
+
+            <div class="card-header">
+
+                <div class="card-title">
+
+                    <span class="number">
+                        04
+                    </span>
+
+                    INPUT EXCEPTIONS
+
+                </div>
+
+                <span class="section-tag">
+                    VALIDATION
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div
+                    id="noErrorMessage"
+                    class="no-error"
+                >
+                    No errors detected.
+                    Validation errors and solver warnings
+                    will appear here.
+                </div>
+
+
+                <div
+                    id="errorPanel"
+                    class="error-panel"
+                >
+
+                    <div class="error-title">
+                        ERROR / WARNING
+                    </div>
+
+
+                    <ul
+                        id="errorList"
+                    ></ul>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             05 SOLUTION
+             LAST SECTION
+        ========================== -->
+
+        <section
+            id="solutionCard"
+            class="card solution-card"
+            style="display:none;"
+        >
+
+            <div class="card-header">
+
+                <div class="card-title">
+
+                    <span class="number">
+                        05
+                    </span>
+
+                    SOLUTION OUTPUT
+
+                </div>
+
+                <span
+                    id="solutionTag"
+                    class="section-tag"
+                >
+                    RESULT
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+
+                <!-- SOLUTION VALUES -->
+
+                <div class="solution-grid">
+
+
+                    <div class="answer-box">
+
+                        <div class="answer-label">
+                            x₁
+                        </div>
+
+                        <div
+                            id="answerX1"
+                            class="answer-value"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <div class="answer-box">
+
+                        <div class="answer-label">
+                            x₂
+                        </div>
+
+                        <div
+                            id="answerX2"
+                            class="answer-value"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+
+                    <div class="answer-box">
+
+                        <div class="answer-label">
+                            x₃
+                        </div>
+
+                        <div
+                            id="answerX3"
+                            class="answer-value"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SUMMARY -->
+
+                <div
+                    id="solutionSummary"
+                    class="solution-summary"
+                ></div>
+
+
+                <!-- COLLAPSIBLE ITERATIONS -->
+
+                <details id="iterationDetails">
+
+                    <summary>
+
+                        <span>
+                            ▸ ITERATION HISTORY
+                        </span>
+
+                        <span
+                            id="iterationCount"
+                            class="section-tag"
+                        >
+                            0 STEPS
+                        </span>
+
+                    </summary>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        ITERATION
+                                    </th>
+
+                                    <th>
+                                        x₁
+                                    </th>
+
+                                    <th>
+                                        x₂
+                                    </th>
+
+                                    <th>
+                                        x₃
+                                    </th>
+
+                                    <th>
+                                        |Δx₁|
+                                    </th>
+
+                                    <th>
+                                        |Δx₂|
+                                    </th>
+
+                                    <th>
+                                        |Δx₃|
+                                    </th>
+
+                                    <th>
+                                        MAX ERROR
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody
+                                id="historyBody"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </details>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        GAUSS-SEIDEL // NUMERICAL METHODS LAB
+    </footer>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
