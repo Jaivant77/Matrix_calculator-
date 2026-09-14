@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gauss-Seidel 3×3 Matrix Solver</title>
+<style>
+  :root{
+    --bg:#f4f7fb; --card:#fff; --text:#172033; --muted:#667085;
+    --primary:#315efb; --primary2:#2447c8; --border:#dbe2ea;
+    --success:#16845b; --danger:#d92d20; --shadow:0 12px 35px rgba(20,35,70,.09);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:Inter,Segoe UI,Arial,sans-serif; color:var(--text);
+    background:linear-gradient(135deg,#f7f9fc,#eef3fb); min-height:100vh;
+  }
+  .container{max-width:1100px;margin:auto;padding:34px 20px 50px}
+  header{margin-bottom:24px}
+  .eyebrow{color:var(--primary);font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+  h1{font-size:34px;margin:7px 0 6px}
+  .subtitle{color:var(--muted);margin:0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:18px;
+    padding:22px;box-shadow:var(--shadow)
+  }
+  .full{grid-column:1/-1}
+  h2{font-size:18px;margin:0 0 16px}
+  .matrix-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
+  .matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  input{
+    width:100%; padding:12px 10px; border:1px solid var(--border);border-radius:10px;
+    font-size:15px; text-align:center; outline:none; transition:.2s; background:#fbfcfe;
+  }
+  input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(49,94,251,.11);background:white}
+  .vector{display:grid;grid-template-columns:1fr;gap:9px;max-width:130px}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:650}
+  .settings{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .setting{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:12px}
+  .setting input{background:white;text-align:left}
+  .guess{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .actions{display:flex;gap:10px;margin-top:18px}
+  button{
+    border:0;border-radius:11px;padding:12px 17px;font-weight:750;cursor:pointer;
+    font-size:14px;transition:.2s
+  }
+  .primary{background:var(--primary);color:white}.primary:hover{background:var(--primary2)}
+  .secondary{background:#edf2f7;color:#344054}.secondary:hover{background:#e3e9f0}
+  .status{margin-top:15px;padding:12px;border-radius:10px;display:none;font-size:14px}
+  .status.error{display:block;background:#fff0ef;color:var(--danger);border:1px solid #ffd0cc}
+  .status.ok{display:block;background:#ecfdf3;color:var(--success);border:1px solid #b7ebd0}
+  .result-box{display:none}
+  .answer{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+  .answer div{background:#f6f8ff;border:1px solid #dbe3ff;border-radius:13px;padding:14px}
+  .answer span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+  .answer strong{font-size:22px}
+  .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:650px}
+  th,td{padding:10px;border-bottom:1px solid var(--border);text-align:center}
+  th{background:#f7f9fc;font-weight:800}
+  tr:last-child td{border-bottom:0}
+  .converged{color:var(--success);font-weight:800}
+  .formula{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:14px;color:#475467;line-height:1.6}
+  @media(max-width:760px){
+    .grid,.matrix-wrap{grid-template-columns:1fr}
+    .full{grid-column:auto}.settings{grid-template-columns:1fr}
+    h1{font-size:28px}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="eyebrow">Numerical Methods • 3×3 System</div>
+    <h1>Gauss-Seidel Matrix Solver</h1>
+    <p class="subtitle">Solve a 3×3 system of linear equations with step-by-step iterations.</p>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>1. Coefficient Matrix A</h2>
+      <div class="matrix" id="matrix"></div>
+    </section>
+
+    <section class="card">
+      <h2>2. Constants Vector b</h2>
+      <div class="vector" id="vector"></div>
+      <div class="formula" style="margin-top:16px">
+        <b>System:</b><br>
+        a₁₁x₁ + a₁₂x₂ + a₁₃x₃ = b₁<br>
+        a₂₁x₁ + a₂₂x₂ + a₂₃x₃ = b₂<br>
+        a₃₁x₁ + a₃₂x₂ + a₃₃x₃ = b₃
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Solver Settings</h2>
+      <div class="settings">
+        <div class="setting">
+          <label for="tol">Tolerance</label>
+          <input id="tol" type="number" value="0.000001" step="any" min="0.000000001">
+        </div>
+        <div class="setting">
+          <label for="maxIter">Maximum Iterations</label>
+          <input id="maxIter" type="number" value="100" min="1" max="10000">
+        </div>
+      </div>
+      <h2 style="margin-top:20px">Initial Guess</h2>
+      <div class="guess">
+        <input id="x0" type="number" value="0" step="any" placeholder="x₁">
+        <input id="y0" type="number" value="0" step="any" placeholder="x₂">
+        <input id="z0" type="number" value="0" step="any" placeholder="x₃">
+      </div>
+      <div class="actions">
+        <button class="primary" onclick="solve()">Solve Matrix</button>
+        <button class="secondary" onclick="resetAll()">Reset</button>
+      </div>
+      <div id="status" class="status"></div>
+    </section>
+
+    <section class="card result-box full" id="result">
+      <h2>Solution</h2>
+      <div class="answer">
+        <div><span>x₁</span><strong id="ans1">—</strong></div>
+        <div><span>x₂</span><strong id="ans2">—</strong></div>
+        <div><span>x₃</span><strong id="ans3">—</strong></div>
+      </div>
+      <div id="summary" class="status ok"></div>
+      <h2 style="margin-top:20px">Iteration History</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Iteration</th><th>x₁</th><th>x₂</th><th>x₃</th><th>Max Error</th></tr></thead>
+          <tbody id="history"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const defaultA = [
+  [10,-1,2],
+  [-1,11,-1],
+  [2,-1,10]
+];
+const defaultB = [6,25,-11];
+
+function makeInputs(){
+  const m=document.getElementById('matrix');
+  const v=document.getElementById('vector');
+  m.innerHTML=''; v.innerHTML='';
+  for(let i=0;i<3;i++){
+    for(let j=0;j<3;j++){
+      const inp=document.createElement('input');
+      inp.type='number'; inp.step='any'; inp.id=`a${i}${j}`;
+      inp.value=defaultA[i][j]; inp.setAttribute('aria-label',`A row ${i+1} column ${j+1}`);
+      m.appendChild(inp);
+    }
+    const b=document.createElement('input');
+    b.type='number'; b.step='any'; b.id=`b${i}`; b.value=defaultB[i];
+    b.setAttribute('aria-label',`b ${i+1}`);
+    v.appendChild(b);
+  }
+}
+function num(id){ return Number(document.getElementById(id).value); }
+function showStatus(msg,type='error'){
+  const s=document.getElementById('status'); s.textContent=msg; s.className='status '+type;
+}
+function solve(){
+  try{
+    const A=Array.from({length:3},(_,i)=>Array.from({length:3},(_,j)=>num(`a${i}${j}`)));
+    const b=[num('b0'),num('b1'),num('b2')];
+    let x=[num('x0'),num('y0'),num('z0')];
+    const tol=num('tol'), maxIter=Math.floor(num('maxIter'));
+
+    if(A.flat().some(v=>!Number.isFinite(v)) || b.some(v=>!Number.isFinite(v)) || x.some(v=>!Number.isFinite(v)))
+      throw new Error('Please enter valid numeric values.');
+    if(!Number.isFinite(tol) || tol<=0) throw new Error('Tolerance must be greater than 0.');
+    if(!Number.isFinite(maxIter) || maxIter<1) throw new Error('Maximum iterations must be at least 1.');
+    for(let i=0;i<3;i++) if(Math.abs(A[i][i])<1e-15)
+      throw new Error(`Diagonal element a${i+1}${i+1} cannot be zero.`);
+
+    const history=[];
+    let converged=false, iter=0;
+
+    for(iter=1;iter<=maxIter;iter++){
+      const old=[...x];
+
+      // Gauss-Seidel: each newly calculated value is immediately reused.
+      for(let i=0;i<3;i++){
+        let sum=b[i];
+        for(let j=0;j<3;j++) if(j!==i) sum-=A[i][j]*x[j];
+        x[i]=sum/A[i][i];
+      }
+
+      const errors=x.map((v,i)=>Math.abs(v-old[i]));
+      const maxErr=Math.max(...errors);
+      history.push([iter,...x,maxErr]);
+
+      if(maxErr<tol){ converged=true; break; }
+    }
+
+    document.getElementById('ans1').textContent=x[0].toFixed(8);
+    document.getElementById('ans2').textContent=x[1].toFixed(8);
+    document.getElementById('ans3').textContent=x[2].toFixed(8);
+
+    const tbody=document.getElementById('history'); tbody.innerHTML='';
+    history.forEach(r=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${r[0]}</td><td>${r[1].toFixed(8)}</td><td>${r[2].toFixed(8)}</td><td>${r[3].toFixed(8)}</td><td>${r[4].toExponential(3)}</td>`;
+      tbody.appendChild(tr);
+    });
+
+    const summary=document.getElementById('summary');
+    summary.textContent=converged
+      ? `Converged in ${iter} iteration${iter===1?'':'s'} with tolerance ${tol}.`
+      : `Did not reach the tolerance within ${maxIter} iterations. Showing the latest approximation.`;
+    summary.className='status '+(converged?'ok':'error');
+
+    document.getElementById('result').style.display='block';
+    showStatus(converged ? 'Solution found successfully.' : 'Maximum iterations reached.', converged?'ok':'error');
+    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){ showStatus(e.message,'error'); }
+}
+function resetAll(){
+  makeInputs();
+  ['x0','y0','z0'].forEach(id=>document.getElementById(id).value=0);
+  document.getElementById('tol').value='0.000001';
+  document.getElementById('maxIter').value=100;
+  document.getElementById('result').style.display='none';
+  document.getElementById('status').className='status';
+  document.getElementById('status').textContent='';
+}
+makeInputs();
+</script>
+</body>
+</html>
