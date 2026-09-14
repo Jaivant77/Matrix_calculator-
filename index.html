@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gauss-Seidel // 3×3 Solver</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="shell">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="brand">
+            <span class="brand-dot"></span>
+            NUM_METHODS // GS_SOLVER
+        </div>
+
+        <div class="terminal-chip">
+            3×3 • GAUSS-SEIDEL • OFFLINE
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="prompt">
+            root@matrix-lab:~$ ./gauss_seidel --solve
+        </div>
+
+        <h1>
+            Gauss-Seidel<br>
+            Matrix Calculator
+        </h1>
+
+        <p>
+            Solve a 3×3 system of linear equations using the Gauss-Seidel
+            iterative method with validation, convergence tracking,
+            iteration history and live solver status.
+        </p>
+    </section>
+
+
+    <!-- MAIN -->
+    <main class="layout">
+
+        <!-- LEFT COLUMN -->
+        <div class="stack">
+
+            <!-- MATRIX INPUT -->
+            <section class="card">
+
+                <div class="card-head">
+                    <div class="card-title">
+                        <span class="index">01</span>
+                        Input Matrix A
+                    </div>
+
+                    <div class="summary-tag">
+                        COEFFICIENTS
+                    </div>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="matrix-layout">
+
+                        <!-- MATRIX A -->
+                        <div>
+
+                            <div class="section-label">
+                                A =
+                            </div>
+
+                            <div class="matrix-frame">
+
+                                <div class="matrix" id="matrixInputs">
+                                    <!-- JS Generated -->
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- VECTOR B -->
+                        <div>
+
+                            <div class="section-label">
+                                b =
+                            </div>
+
+                            <div class="vector" id="vectorInputs">
+                                <!-- JS Generated -->
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="hint">
+                        Accepted values: integers, decimals and scientific notation.
+                        Diagonal elements must be non-zero.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SETTINGS -->
+            <section class="card">
+
+                <div class="card-head">
+
+                    <div class="card-title">
+                        <span class="index">02</span>
+                        Solver Configuration
+                    </div>
+
+                    <div class="summary-tag">
+                        ITERATION CONTROL
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="section-label">
+                        Convergence
+                    </div>
+
+
+                    <div class="settings">
+
+                        <div class="setting">
+
+                            <label for="tolerance">
+                                Tolerance
+                            </label>
+
+                            <input
+                                id="tolerance"
+                                type="number"
+                                step="any"
+                                min="0"
+                                value="0.000001"
+                            >
+
+                        </div>
+
+
+                        <div class="setting">
+
+                            <label for="maxIterations">
+                                Max Iterations
+                            </label>
+
+                            <input
+                               
