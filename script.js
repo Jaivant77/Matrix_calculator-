@@ -1,8 +1,12 @@
 (() => {
 
-    /* =========================================
-       DEFAULT MATRIX
-    ========================================= */
+    /* =====================================================
+       DEFAULT EXAMPLE
+
+       10x1 - 1x2 + 2x3 = 6
+       -1x1 + 11x2 - 1x3 = 25
+       2x1 - 1x2 + 10x3 = -11
+    ===================================================== */
 
     const defaultA = [
         [10, -1, 2],
@@ -17,29 +21,37 @@
     ];
 
 
-    /* =========================================
-       SHORT DOM SELECTOR
-    ========================================= */
+    /* =====================================================
+       DOM SHORTCUT
+    ===================================================== */
 
-    const $ = (id) => document.getElementById(id);
+    const $ = (id) =>
+        document.getElementById(id);
 
 
-    /* =========================================
-       CREATE MATRIX INPUTS
-    ========================================= */
+    /* =====================================================
+       CREATE THE 3 × 3 MATRIX
 
-    function createInputs() {
+       THIS CREATES ALL 9 INPUT BOXES.
+    ===================================================== */
 
-        const matrix =
+    function createMatrixInputs() {
+
+        const matrixContainer =
             $("matrixInputs");
 
-        const vector =
+        const vectorContainer =
             $("vectorInputs");
 
-        matrix.innerHTML = "";
 
-        vector.innerHTML = "";
+        matrixContainer.innerHTML = "";
 
+        vectorContainer.innerHTML = "";
+
+
+        /* -----------------------------
+           CREATE A MATRIX
+        ----------------------------- */
 
         for (let i = 0; i < 3; i++) {
 
@@ -48,93 +60,111 @@
                 const input =
                     document.createElement("input");
 
-                input.type = "number";
 
-                input.step = "any";
+                input.type =
+                    "number";
+
+
+                input.step =
+                    "any";
+
 
                 input.id =
                     `a${i}${j}`;
 
+
                 input.value =
                     defaultA[i][j];
+
 
                 input.placeholder =
                     `a${i + 1}${j + 1}`;
 
-                matrix.appendChild(input);
+
+                input.autocomplete =
+                    "off";
+
+
+                matrixContainer.appendChild(
+                    input
+                );
             }
+        }
 
 
-            const b =
+        /* -----------------------------
+           CREATE VECTOR b
+        ----------------------------- */
+
+        for (let i = 0; i < 3; i++) {
+
+            const input =
                 document.createElement("input");
 
-            b.type = "number";
 
-            b.step = "any";
+            input.type =
+                "number";
 
-            b.id =
+
+            input.step =
+                "any";
+
+
+            input.id =
                 `b${i}`;
 
-            b.value =
+
+            input.value =
                 defaultB[i];
 
-            b.placeholder =
+
+            input.placeholder =
                 `b${i + 1}`;
 
-            vector.appendChild(b);
+
+            input.autocomplete =
+                "off";
+
+
+            vectorContainer.appendChild(
+                input
+            );
         }
     }
 
 
-    /* =========================================
-       INVALID INPUT HIGHLIGHT
-    ========================================= */
+    /* =====================================================
+       CLEAR INVALID INPUT HIGHLIGHTS
+    ===================================================== */
 
-    function markInvalid(
-        id,
-        state = true
-    ) {
-
-        const element =
-            $(id);
-
-        if (!element)
-            return;
-
-        element.classList.toggle(
-            "invalid",
-            state
-        );
-    }
-
-
-    function clearInvalids() {
+    function clearInvalidInputs() {
 
         document
             .querySelectorAll(
                 "input.invalid"
             )
-            .forEach(
-                input =>
-                    input.classList.remove(
-                        "invalid"
-                    )
-            );
+            .forEach(input => {
+
+                input.classList.remove(
+                    "invalid"
+                );
+
+            });
     }
 
 
-    /* =========================================
-       STATUS DISPLAY
-    ========================================= */
+    /* =====================================================
+       STATUS
+    ===================================================== */
 
     function setStatus(
         message,
-        type = "info",
-        badge = "READY",
-        progress = 0
+        type,
+        badge,
+        progress
     ) {
 
-        const line =
+        const status =
             $("statusLine");
 
         const badgeElement =
@@ -143,21 +173,25 @@
 
         let icon = "i";
 
-        if (type === "success")
+
+        if (type === "success") {
             icon = "✓";
+        }
 
-        else if (type === "warn")
+        else if (type === "warn") {
             icon = "!";
+        }
 
-        else if (type === "error")
+        else if (type === "error") {
             icon = "×";
+        }
 
 
-        line.className =
-            `status-line status-${type}`;
+        status.className =
+            `status ${type}`;
 
 
-        line.innerHTML = `
+        status.innerHTML = `
             <span class="status-icon">
                 ${icon}
             </span>
@@ -173,19 +207,13 @@
 
 
         $("progressBar").style.width =
-            `${Math.max(
-                0,
-                Math.min(
-                    100,
-                    progress
-                )
-            )}%`;
+            `${progress}%`;
     }
 
 
-    /* =========================================
-       ERROR PANEL
-    ========================================= */
+    /* =====================================================
+       SHOW ERRORS
+    ===================================================== */
 
     function showErrors(errors) {
 
@@ -199,9 +227,11 @@
             $("noErrorMessage");
 
 
-        if (!errors.length) {
+        if (errors.length === 0) {
 
-            panel.classList.remove("show");
+            panel.classList.remove(
+                "show"
+            );
 
             empty.style.display =
                 "block";
@@ -223,34 +253,38 @@
             "show"
         );
 
+
         empty.style.display =
             "none";
     }
 
 
-    /* =========================================
-       HTML ESCAPE
-    ========================================= */
+    /* =====================================================
+       HTML ESCAPING
+    ===================================================== */
 
-    function escapeHtml(value) {
+    function escapeHtml(text) {
 
-        return value.replace(
-            /[&<>"']/g,
+        return String(text)
+            .replace(
+                /[&<>"']/g,
 
-            character => ({
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;"
-            }[character])
-        );
+                character => ({
+
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#039;"
+
+                }[character])
+            );
     }
 
 
-    /* =========================================
-       READ NUMBER
-    ========================================= */
+    /* =====================================================
+       READ A NUMBER
+    ===================================================== */
 
     function readNumber(
         id,
@@ -258,47 +292,58 @@
         errors
     ) {
 
-        const raw =
-            $(id).value.trim();
+        const input =
+            $(id);
 
+
+        const raw =
+            input.value.trim();
+
+
+        /* EMPTY */
 
         if (raw === "") {
 
-            markInvalid(
-                id,
-                true
+            input.classList.add(
+                "invalid"
             );
+
 
             errors.push(
                 `${label} is required.`
             );
 
+
             return null;
         }
 
+
+        /* NUMBER */
 
         const value =
             Number(raw);
 
 
+        /* INVALID NUMBER */
+
         if (!Number.isFinite(value)) {
 
-            markInvalid(
-                id,
-                true
+            input.classList.add(
+                "invalid"
             );
 
+
             errors.push(
-                `${label} must be a finite number.`
+                `${label} must be a valid finite number.`
             );
+
 
             return null;
         }
 
 
-        markInvalid(
-            id,
-            false
+        input.classList.remove(
+            "invalid"
         );
 
 
@@ -306,66 +351,80 @@
     }
 
 
-    /* =========================================
-       VALIDATE ALL INPUTS
-    ========================================= */
+    /* =====================================================
+       VALIDATE INPUT
+    ===================================================== */
 
     function validate() {
 
-        clearInvalids();
+        clearInvalidInputs();
 
 
         const errors = [];
 
 
-        /* MATRIX */
+        /* --------------------------------
+           READ 3 × 3 MATRIX A
+        -------------------------------- */
 
-        const A =
-            Array.from(
-                { length: 3 },
-
-                (_, i) =>
-                    Array.from(
-                        { length: 3 },
-
-                        (_, j) =>
-                            readNumber(
-                                `a${i}${j}`,
-                                `a${i + 1}${j + 1}`,
-                                errors
-                            )
-                    )
-            );
+        const A = [];
 
 
-        /* RHS VECTOR */
+        for (let i = 0; i < 3; i++) {
+
+            const row = [];
+
+
+            for (let j = 0; j < 3; j++) {
+
+                const value =
+                    readNumber(
+                        `a${i}${j}`,
+                        `a${i + 1}${j + 1}`,
+                        errors
+                    );
+
+
+                row.push(value);
+            }
+
+
+            A.push(row);
+        }
+
+
+        /* --------------------------------
+           READ VECTOR b
+        -------------------------------- */
 
         const b = [
 
             readNumber(
                 "b0",
-                "b1",
+                "b₁",
                 errors
             ),
 
             readNumber(
                 "b1",
-                "b2",
+                "b₂",
                 errors
             ),
 
             readNumber(
                 "b2",
-                "b3",
+                "b₃",
                 errors
             )
 
         ];
 
 
-        /* INITIAL VALUES */
+        /* --------------------------------
+           READ INITIAL GUESS
+        -------------------------------- */
 
-        const guess = [
+        const initial = [
 
             readNumber(
                 "x10",
@@ -388,7 +447,9 @@
         ];
 
 
-        /* TOLERANCE */
+        /* --------------------------------
+           READ TOLERANCE
+        -------------------------------- */
 
         const tolerance =
             readNumber(
@@ -398,7 +459,9 @@
             );
 
 
-        /* MAX ITERATIONS */
+        /* --------------------------------
+           READ MAX ITERATIONS
+        -------------------------------- */
 
         const maxIterations =
             readNumber(
@@ -408,25 +471,28 @@
             );
 
 
-        /* TOLERANCE CHECK */
+        /* --------------------------------
+           CHECK TOLERANCE
+        -------------------------------- */
 
         if (
             tolerance !== null &&
             tolerance <= 0
         ) {
 
-            markInvalid(
-                "tolerance",
-                true
-            );
+            $("tolerance")
+                .classList.add("invalid");
+
 
             errors.push(
-                "Tolerance must be greater than 0."
+                "Tolerance must be greater than zero."
             );
         }
 
 
-        /* MAX ITERATION CHECK */
+        /* --------------------------------
+           CHECK ITERATIONS
+        -------------------------------- */
 
         if (
             maxIterations !== null &&
@@ -439,10 +505,9 @@
             )
         ) {
 
-            markInvalid(
-                "maxIterations",
-                true
-            );
+            $("maxIterations")
+                .classList.add("invalid");
+
 
             errors.push(
                 "Maximum iterations must be an integer between 1 and 100000."
@@ -450,7 +515,9 @@
         }
 
 
-        /* DIAGONAL CHECK */
+        /* --------------------------------
+           CHECK DIAGONAL VALUES
+        -------------------------------- */
 
         if (errors.length === 0) {
 
@@ -462,23 +529,29 @@
                     ) < 1e-15
                 ) {
 
-                    markInvalid(
-                        `a${i}${i}`,
-                        true
-                    );
+                    $(`a${i}${i}`)
+                        .classList.add(
+                            "invalid"
+                        );
+
 
                     errors.push(
-                        `Diagonal element a${i + 1}${i + 1} cannot be zero.`
+                        `a${i + 1}${i + 1} cannot be zero because it is used as a divisor in Gauss-Seidel.`
                     );
                 }
             }
         }
 
 
+        /* --------------------------------
+           RETURN DATA
+        -------------------------------- */
+
         return {
+
             A,
             b,
-            guess,
+            initial,
             tolerance,
             maxIterations,
             errors
@@ -486,24 +559,22 @@
     }
 
 
-    /* =========================================
-       GAUSS-SEIDEL SOLVER
-       
-       IMPORTANT:
-       The Gauss-Seidel equations are
-       implemented directly here.
+    /* =====================================================
+       GAUSS-SEIDEL METHOD
 
-       x1(k+1) =
-       [b1 - a12*x2(k) - a13*x3(k)] / a11
+       The newly calculated values are immediately reused.
 
-       x2(k+1) =
-       [b2 - a21*x1(k+1) - a23*x3(k)] / a22
+       x1(new) =
+       (b1 - a12*x2(old) - a13*x3(old)) / a11
 
-       x3(k+1) =
-       [b3 - a31*x1(k+1) - a32*x2(k+1)] / a33
-    ========================================= */
+       x2(new) =
+       (b2 - a21*x1(new) - a23*x3(old)) / a22
 
-    function solveGaussSeidel(
+       x3(new) =
+       (b3 - a31*x1(new) - a32*x2(new)) / a33
+    ===================================================== */
+
+    function gaussSeidel(
         A,
         b,
         initial,
@@ -515,7 +586,7 @@
             [...initial];
 
 
-        const rows = [];
+        const history = [];
 
 
         for (
@@ -524,14 +595,19 @@
             iteration++
         ) {
 
+            /* --------------------------------
+               SAVE OLD VALUES
+            -------------------------------- */
+
             const oldX =
                 [...x];
 
 
-            /* ===============================
-               STEP 1
-               CALCULATE X1
-            =============================== */
+            /* =================================
+               GAUSS-SEIDEL X1
+
+               Uses current x2 and x3.
+            ================================= */
 
             x[0] =
                 (
@@ -539,15 +615,16 @@
                     - A[0][1] * x[1]
                     - A[0][2] * x[2]
                 )
-                / A[0][0];
+                /
+                A[0][0];
 
 
-            /* ===============================
-               STEP 2
-               CALCULATE X2
+            /* =================================
+               GAUSS-SEIDEL X2
 
-               NEW x1 IS USED IMMEDIATELY
-            =============================== */
+               IMPORTANT:
+               Uses NEW x1.
+            ================================= */
 
             x[1] =
                 (
@@ -555,15 +632,16 @@
                     - A[1][0] * x[0]
                     - A[1][2] * x[2]
                 )
-                / A[1][1];
+                /
+                A[1][1];
 
 
-            /* ===============================
-               STEP 3
-               CALCULATE X3
+            /* =================================
+               GAUSS-SEIDEL X3
 
-               NEW x1 AND x2 ARE USED
-            =============================== */
+               IMPORTANT:
+               Uses NEW x1 AND NEW x2.
+            ================================= */
 
             x[2] =
                 (
@@ -571,15 +649,20 @@
                     - A[2][0] * x[0]
                     - A[2][1] * x[1]
                 )
-                / A[2][2];
+                /
+                A[2][2];
 
 
-            /* CHECK NUMERICAL VALIDITY */
+            /* --------------------------------
+               CHECK NUMERICAL VALIDITY
+            -------------------------------- */
 
             if (
                 x.some(
                     value =>
-                        !Number.isFinite(value)
+                        !Number.isFinite(
+                            value
+                        )
                 )
             ) {
 
@@ -587,65 +670,73 @@
 
                     converged: false,
 
-                    diverged: true,
+                    unstable: true,
 
                     x,
 
-                    rows,
+                    history,
 
                     iteration,
 
                     reason:
-                        "A non-finite value was produced. The iteration may be diverging or numerically unstable."
+                        "The calculation produced a non-finite value. The system may be numerically unstable."
                 };
             }
 
 
-            /* ===============================
-               ERROR CALCULATION
-            =============================== */
+            /* --------------------------------
+               CALCULATE INDIVIDUAL ERRORS
+            -------------------------------- */
 
-            const deltas = [
-
+            const dx1 =
                 Math.abs(
                     x[0] - oldX[0]
-                ),
+                );
 
+
+            const dx2 =
                 Math.abs(
                     x[1] - oldX[1]
-                ),
+                );
 
+
+            const dx3 =
                 Math.abs(
                     x[2] - oldX[2]
-                )
-
-            ];
+                );
 
 
             const maxError =
                 Math.max(
-                    ...deltas
+                    dx1,
+                    dx2,
+                    dx3
                 );
 
 
-            /* STORE ITERATION */
+            /* --------------------------------
+               STORE ITERATION
+            -------------------------------- */
 
-            rows.push({
+            history.push({
 
                 iteration,
 
                 x: [...x],
 
-                deltas,
+                dx1,
+
+                dx2,
+
+                dx3,
 
                 maxError
-
             });
 
 
-            /* ===============================
-               CONVERGENCE CHECK
-            =============================== */
+            /* --------------------------------
+               CONVERGENCE TEST
+            -------------------------------- */
 
             if (
                 maxError <= tolerance
@@ -655,28 +746,29 @@
 
                     converged: true,
 
-                    diverged: false,
+                    unstable: false,
 
                     x,
 
-                    rows,
+                    history,
 
                     iteration,
 
                     reason:
-                        "Convergence criterion satisfied."
+                        "Convergence achieved."
                 };
             }
 
 
-            /* ===============================
+            /* --------------------------------
                RUNAWAY VALUE PROTECTION
-            =============================== */
+            -------------------------------- */
 
             if (
                 x.some(
                     value =>
-                        Math.abs(value) > 1e100
+                        Math.abs(value) >
+                        1e100
                 )
             ) {
 
@@ -684,44 +776,48 @@
 
                     converged: false,
 
-                    diverged: true,
+                    unstable: true,
 
                     x,
 
-                    rows,
+                    history,
 
                     iteration,
 
                     reason:
-                        "Values grew beyond a safe numerical range."
+                        "The solution values are growing excessively. The system may be diverging."
                 };
             }
         }
 
 
+        /* --------------------------------
+           MAX ITERATIONS
+        -------------------------------- */
+
         return {
 
             converged: false,
 
-            diverged: false,
+            unstable: false,
 
             x,
 
-            rows,
+            history,
 
             iteration: maxIterations,
 
             reason:
-                "Maximum iteration count reached before convergence."
+                "Maximum iteration limit reached before convergence."
         };
     }
 
 
-    /* =========================================
-       NUMBER FORMATTING
-    ========================================= */
+    /* =====================================================
+       NUMBER FORMATTER
+    ===================================================== */
 
-    function fmt(value) {
+    function formatNumber(value) {
 
         if (
             !Number.isFinite(value)
@@ -731,19 +827,22 @@
         }
 
 
-        const absolute =
+        const abs =
             Math.abs(value);
 
 
         if (
             (
-                absolute !== 0 &&
-                absolute < 1e-6
-            ) ||
-            absolute >= 1e8
+                abs !== 0 &&
+                abs < 0.000001
+            )
+            ||
+            abs >= 100000000
         ) {
 
-            return value.toExponential(8);
+            return value.toExponential(
+                8
+            );
         }
 
 
@@ -751,148 +850,183 @@
     }
 
 
-    /* =========================================
-       DISPLAY SOLUTION
-    ========================================= */
+    /* =====================================================
+       RENDER SOLUTION
+    ===================================================== */
 
-    function renderResult(
+    function renderSolution(
         result,
         tolerance,
         maxIterations
     ) {
 
-        $("solutionCard").style.display =
+        const solutionCard =
+            $("solutionCard");
+
+
+        solutionCard.style.display =
             "block";
 
 
+        /* --------------------------------
+           FINAL ANSWERS
+        -------------------------------- */
+
         $("answerX1").textContent =
-            fmt(result.x[0]);
+            formatNumber(
+                result.x[0]
+            );
 
 
         $("answerX2").textContent =
-            fmt(result.x[1]);
+            formatNumber(
+                result.x[1]
+            );
 
 
         $("answerX3").textContent =
-            fmt(result.x[2]);
+            formatNumber(
+                result.x[2]
+            );
 
 
-        /* RESULT STATUS */
-
-        let state = "MAX ITER";
-
-        if (result.converged)
-            state = "CONVERGED";
-
-        else if (result.diverged)
-            state = "UNSTABLE";
-
-
-        $("solutionTag").textContent =
-            state;
-
-
-        /* SUMMARY */
-
-        let summary;
-
+        /* --------------------------------
+           STATUS TAG
+        -------------------------------- */
 
         if (result.converged) {
 
-            const finalError =
-                result.rows[
-                    result.rows.length - 1
-                ].maxError;
-
-
-            summary =
-                `Converged in ${result.iteration} iteration(s). ` +
-                `Final maximum error = ` +
-                `${finalError.toExponential(4)}, ` +
-                `tolerance = ${tolerance}.`;
+            $("solutionTag")
+                .textContent =
+                "CONVERGED";
         }
 
+        else if (result.unstable) {
+
+            $("solutionTag")
+                .textContent =
+                "UNSTABLE";
+        }
 
         else {
 
-            summary =
-                `${result.reason} ` +
-                `Last computed approximation is shown above. ` +
-                `Iterations performed: ` +
-                `${result.iteration}/${maxIterations}.`;
+            $("solutionTag")
+                .textContent =
+                "MAX ITER";
         }
 
 
-        $("solutionSummary").textContent =
-            summary;
+        /* --------------------------------
+           SUMMARY
+        -------------------------------- */
+
+        if (result.converged) {
+
+            const last =
+                result.history[
+                    result.history.length - 1
+                ];
 
 
-        /* ITERATION TABLE */
+            $("solutionSummary").textContent =
+                `Converged successfully in ${result.iteration} iteration(s). ` +
+                `Final maximum error = ${last.maxError.toExponential(4)}. ` +
+                `Tolerance = ${tolerance}.`;
+        }
+
+        else {
+
+            $("solutionSummary").textContent =
+                `${result.reason} ` +
+                `Last approximation is shown above. ` +
+                `Iterations performed: ${result.iteration}/${maxIterations}.`;
+        }
+
+
+        /* --------------------------------
+           ITERATION TABLE
+        -------------------------------- */
 
         const body =
             $("historyBody");
 
 
-        body.innerHTML =
-            result.rows
-                .map(
-                    row => `
-
-                    <tr
-                        class="${
-                            row.iteration === result.iteration
-                                ? "final-row"
-                                : ""
-                        }"
-                    >
-
-                        <td>
-                            ${row.iteration}
-                        </td>
-
-                        <td>
-                            ${fmt(row.x[0])}
-                        </td>
-
-                        <td>
-                            ${fmt(row.x[1])}
-                        </td>
-
-                        <td>
-                            ${fmt(row.x[2])}
-                        </td>
-
-                        <td>
-                            ${row.deltas[0].toExponential(3)}
-                        </td>
-
-                        <td>
-                            ${row.deltas[1].toExponential(3)}
-                        </td>
-
-                        <td>
-                            ${row.deltas[2].toExponential(3)}
-                        </td>
-
-                        <td>
-                            ${row.maxError.toExponential(3)}
-                        </td>
-
-                    </tr>
-
-                `
-                )
-                .join("");
+        body.innerHTML = "";
 
 
-        $("iterationCount").textContent =
-            `${result.rows.length} STEPS`;
+        result.history.forEach(
+            row => {
+
+                const tr =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                if (
+                    row.iteration ===
+                    result.iteration
+                ) {
+
+                    tr.classList.add(
+                        "final-row"
+                    );
+                }
+
+
+                tr.innerHTML = `
+
+                    <td>
+                        ${row.iteration}
+                    </td>
+
+                    <td>
+                        ${formatNumber(row.x[0])}
+                    </td>
+
+                    <td>
+                        ${formatNumber(row.x[1])}
+                    </td>
+
+                    <td>
+                        ${formatNumber(row.x[2])}
+                    </td>
+
+                    <td>
+                        ${row.dx1.toExponential(3)}
+                    </td>
+
+                    <td>
+                        ${row.dx2.toExponential(3)}
+                    </td>
+
+                    <td>
+                        ${row.dx3.toExponential(3)}
+                    </td>
+
+                    <td>
+                        ${row.maxError.toExponential(3)}
+                    </td>
+
+                `;
+
+
+                body.appendChild(
+                    tr
+                );
+            }
+        );
+
+
+        $("iterationCount")
+            .textContent =
+            `${result.history.length} STEPS`;
     }
 
 
-    /* =========================================
-       MAIN SOLVER
-    ========================================= */
+    /* =====================================================
+       RUN SOLVER
+    ===================================================== */
 
     function runSolver() {
 
@@ -900,15 +1034,17 @@
             validate();
 
 
+        /* SHOW INPUT ERRORS */
+
         showErrors(
             data.errors
         );
 
 
-        /* STOP ON ERRORS */
+        /* STOP */
 
         if (
-            data.errors.length
+            data.errors.length > 0
         ) {
 
             setStatus(
@@ -919,7 +1055,8 @@
             );
 
 
-            $("solutionCard").style.display =
+            $("solutionCard")
+                .style.display =
                 "none";
 
 
@@ -927,58 +1064,61 @@
         }
 
 
-        /* RUN MESSAGE */
+        /* RUNNING */
 
         setStatus(
-            "Running Gauss-Seidel iterations...",
+            "Initializing Gauss-Seidel iteration...",
             "info",
             "RUNNING",
-            15
+            10
         );
 
 
-        /* ALLOW UI UPDATE */
+        /*
+           Small delay allows the status indicator
+           to visibly update before the calculation.
+        */
 
         setTimeout(() => {
 
             const result =
-                solveGaussSeidel(
+                gaussSeidel(
                     data.A,
                     data.b,
-                    data.guess,
+                    data.initial,
                     data.tolerance,
                     data.maxIterations
                 );
 
 
-            /* STATUS */
+            /* --------------------------------
+               UPDATE STATUS
+            -------------------------------- */
 
             if (result.converged) {
 
                 setStatus(
-                    "Gauss-Seidel converged successfully.",
+                    `Convergence achieved in ${result.iteration} iteration(s).`,
                     "success",
                     "DONE",
                     100
                 );
             }
 
-
-            else if (result.diverged) {
+            else if (result.unstable) {
 
                 setStatus(
-                    "The solver became numerically unstable.",
+                    "The calculation became numerically unstable.",
                     "error",
                     "UNSTABLE",
                     100
                 );
             }
 
-
             else {
 
                 setStatus(
-                    "Maximum iteration count reached before convergence.",
+                    "Maximum iterations reached before convergence.",
                     "warn",
                     "MAX ITER",
                     100
@@ -986,19 +1126,31 @@
             }
 
 
-            /* RESULT */
+            /* --------------------------------
+               SHOW SOLUTION
+            -------------------------------- */
 
-            renderResult(
+            renderSolution(
                 result,
                 data.tolerance,
                 data.maxIterations
             );
 
 
-            /* SOLVER ERROR */
+            /* --------------------------------
+               SOLVER-LEVEL ERROR
+            -------------------------------- */
 
             if (
-                result.diverged ||
+                result.unstable
+            ) {
+
+                showErrors([
+                    result.reason
+                ]);
+            }
+
+            else if (
                 !result.converged
             ) {
 
@@ -1007,14 +1159,15 @@
                 ]);
             }
 
-
             else {
 
                 showErrors([]);
             }
 
 
-            /* SCROLL TO SOLUTION */
+            /* --------------------------------
+               SCROLL TO LAST SECTION
+            -------------------------------- */
 
             $("solutionCard")
                 .scrollIntoView({
@@ -1023,24 +1176,17 @@
                 });
 
 
-        }, 100);
+        }, 120);
     }
 
 
-    /* =========================================
+    /* =====================================================
        RESET
-    ========================================= */
+    ===================================================== */
 
     function resetAll() {
 
-        createInputs();
-
-
-        $("x10").value = 0;
-
-        $("x20").value = 0;
-
-        $("x30").value = 0;
+        createMatrixInputs();
 
 
         $("tolerance").value =
@@ -1051,7 +1197,20 @@
             "100";
 
 
-        $("solutionCard").style.display =
+        $("x10").value =
+            "0";
+
+
+        $("x20").value =
+            "0";
+
+
+        $("x30").value =
+            "0";
+
+
+        $("solutionCard")
+            .style.display =
             "none";
 
 
@@ -1059,7 +1218,7 @@
             false;
 
 
-        clearInvalids();
+        clearInvalidInputs();
 
 
         showErrors([]);
@@ -1080,11 +1239,11 @@
     }
 
 
-    /* =========================================
+    /* =====================================================
        INITIALIZE
-    ========================================= */
+    ===================================================== */
 
-    createInputs();
+    createMatrixInputs();
 
 
     $("solveBtn")
@@ -1101,14 +1260,16 @@
         );
 
 
-    /* Remove invalid highlight while editing */
+    /* Remove invalid styling when user edits */
 
     document.addEventListener(
         "input",
         event => {
 
             if (
-                event.target.matches("input")
+                event.target.matches(
+                    "input"
+                )
             ) {
 
                 event.target.classList.remove(
